@@ -16,7 +16,7 @@ const rsorted = right.sort((a, b) => a - b)
 
 // Skrev om det till reduce bara för att se om jag kunde. Blir två loopar men coolare
 const tot = lsorted.reduce((prev, val, i) => prev + Math.abs(rsorted[i] - val), 0)
-const simscore = lsorted.reduce((prev, val, i) => prev + val * right.filter(r => r === val).length, 0)
+const simscore = left.reduce((prev, val) => prev + val * right.filter(r => r === val).length, 0)
 
 console.log('Del 1: ' + tot)
 console.log('Del 2: ' + simscore)
