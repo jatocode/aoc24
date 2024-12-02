@@ -31,17 +31,12 @@ function checkLevel(level) {
     let safe = true
     level.forEach((x, i) => {
         const next = level[i + 1]
-        if (next != undefined && x - next > 0) inc++
-        if (next != undefined && x - next < 0) dec++
-        if (!checkSafe(x, next)) safe = false
+        if (next != undefined) {
+            if (x - next > 0) inc++
+            if (x - next < 0) dec++
+            safe &&= Math.abs(x - next) > 0 && Math.abs(x - next) < 4
+        }
     })
 
     return safe && (inc == level.length - 1 || dec == level.length - 1);
-}
-
-function checkSafe(a, b) {
-    if (b != undefined) {
-        return Math.abs(a - b) > 0 && Math.abs(a - b) < 4
-    }
-    return true
 }
