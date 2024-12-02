@@ -4,26 +4,26 @@ const args = process.argv.slice(2)
 const data = fs.readFileSync(args[0], 'utf8')
 const lines = data.split('\n')
 
-let tot = 0
-let tot2 = 0
+let safe = 0
+let withDamper = 0
 lines.forEach(line => {
     const level = line.split(' ').map(x => parseInt(x))
-    const safe = checkLevel(level)
-    if (safe) tot++
+    if (checkLevel(level)) 
+        safe++
     else {
         for (let i = 0; i < level.length; i++) {
             const newlevel = [...level]
             newlevel.splice(i, 1)
             if (checkLevel(newlevel)) {
-                tot2++
+                withDamper++
                 break
             }
         }
     }
 })
 
-console.log('Del 1:', tot)
-console.log('Del 2:', tot + tot2)
+console.log('Del 1:', safe)
+console.log('Del 2:', safe + withDamper)
 
 function checkLevel(level) {
     let inc = 0
