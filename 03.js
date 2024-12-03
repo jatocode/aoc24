@@ -32,10 +32,9 @@ function sumMulWithCond(line) {
     let enabled = true
     for (const m of match) {
         if (m[1] == undefined) continue
-        if (m[1] == 'do()') enabled = true
-        if (m[1] == 'don\'t()') enabled = false
-
-        if (enabled && m[1].startsWith('mul')) sum += parseInt(m[2]) * parseInt(m[3])
+        else if (m[1] == 'do()') enabled = true
+        else if (m[1] == 'don\'t()') enabled = false
+        else if (enabled) sum += parseInt(m[2]) * parseInt(m[3])
     }
     return sum
 }
