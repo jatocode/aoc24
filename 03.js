@@ -31,8 +31,7 @@ function sumMulWithCond(line) {
     let sum = 0
     let enabled = true
     for (const m of match) {
-        if (m[1] == undefined) continue
-        else if (m[1] == 'do()') enabled = true
+        if (m[1] == 'do()') enabled = true
         else if (m[1] == 'don\'t()') enabled = false
         else if (enabled) sum += parseInt(m[2]) * parseInt(m[3])
     }
