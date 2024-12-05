@@ -15,34 +15,35 @@ lines.forEach(line => {
 let middleTot = 0
 for (const update of updates) {
     let valid = true
-    for (const page of update) {
-        const pagerules = rules.filter(r => r[0] == page || r[1] == page)
-        valid &&= checkRules(page, update.filter(u => u != page), update, pagerules)
-        if (!valid) break
-    }
+    valid = checkRules(update)
+
     const middle = update[Math.floor(update.length / 2)]
     if (valid) middleTot += middle
 }
 
 console.log('Del 1:', middleTot)
 
-
-function checkRules(page, otherpages, update, rules) {
-    for (const other of otherpages) {
-        for (const rule of rules) {
-            if (rule[0] == page && rule[1] == other) {
-                if(update.indexOf(page) > update.indexOf(other)) {
-                    return false
+function checkRules(update) {
+    let valid = true
+    for (const page of update) {
+        const otherpages = update.filter(o => o != page)
+        const pagerules = rules.filter(r => r[0] == page || r[1] == page)
+        for (const other of otherpages) {
+            for (const rule of pagerules) {
+                if (rule[0] == page && rule[1] == other &&
+                    update.indexOf(page) > update.indexOf(other)) {
+                    valid = false
+                    break
+                } else if (rule[0] == other && rule[0] == page &&
+                    update.indexOf(other) > update.indexOf(page)) {
+                    valid = false
+                    break
+                } else {
+                    continue
                 }
-            } else if (rule[0] == other && rule[0] == page) {
-                if(update.indexOf(other) > update.indexOf(page)) {
-                    return false
-                }
-            } else {
-                continue
             }
         }
     }
-    return true
+    return valid
 }
 
