@@ -19,7 +19,7 @@ line.forEach((line, y) => {
     puzzle.push(line.split(''))
 })
 printPuzzle(puzzle)
-let [positions, loop] = moveGuard(guard,puzzle)
+let [positions, loop] = moveGuard(guard,[...puzzle])
 printPuzzle(puzzle)
 console.log('Del 1:', positions)
 
@@ -30,6 +30,9 @@ for (let y = 0; y < puzzle.length; y++) {
         // let puzzlecopy = JSON.parse(JSON.stringify(puzzle))
         if (puzzle[y][x] == '.') puzzle[y][x] = 'O'
         else continue
+       // printPuzzle(puzzle)
+
+        //console.log('Testing', x, y)
         let [positions, loop] = moveGuard(guardinit, puzzle)
         if (loop) {
             console.log('loop!')
@@ -38,7 +41,6 @@ for (let y = 0; y < puzzle.length; y++) {
             puzzle[y][x] = '.'
         }
     }
-    printPuzzle(puzzle)
 }
 console.log('Del 2:', loops)
 
