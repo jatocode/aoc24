@@ -23,7 +23,7 @@ for (const update of updates) {
     else failed.push(update)
 }
 
-// Del 2
+// Del 2. Byt alla fel tills det funkar...
 failed.forEach(x => {
     while (!(rules.every(y => !(x.includes(y[0])) || !(x.includes(y[1])) || x.indexOf(y[0]) < x.indexOf(y[1])))) {
         rules.forEach(y => {
