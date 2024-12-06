@@ -16,33 +16,32 @@ line.forEach((line, y) => {
     }
     puzzle.push(line.split(''))
 })
+let positions = moveGuard()
 printPuzzle(puzzle)
-moveGuard()
-printPuzzle(puzzle)
+console.log('Del 1:', positions)
 
 function moveGuard() {
-    let [dx, dy] = dir[guarddir]
+    let positions = 0
+    let next = puzzle[guard[1]][guard[0]]
+    do {
+        let [dx, dy] = dir[guarddir]
+        let nx = guard[0] + dx
+        let ny = guard[1] + dy
+        if(puzzle[ny] === undefined) break
 
-    let nx = guard[0] + dx
-    let ny = guard[1] + dy
-    let next = puzzle[ny][nx]
-    while (next != undefined) {
-        nx = guard[0] + dx
-        ny = guard[1] + dy
-        if(puzzle[ny] === undefined) {
-            break
-        }
         next = puzzle[ny][nx]
         if (next != '#') {
             guard[0] += dx
             guard[1] += dy
             puzzle[ny][nx] = 'X'
+            if(next != 'X') positions++
         } else {
             guarddir = (guarddir + 1) % dir.length
             dx = dir[guarddir][0]
             dy = dir[guarddir][1]
         }
-    }
+    } while (next != undefined);
+    return positions
 }
 
 function printPuzzle(puzzle) {
