@@ -2,38 +2,51 @@ const fs = require('fs')
 const args = process.argv.slice(2)
 
 const data = fs.readFileSync(args[0], 'utf8')
-const line = data.split('\n')
+const lines = data.split('\n')
 
 const puzzle = []
 let guard = []
-line.forEach((line, y) => {
+lines.forEach((line, y) => {
     const x = line.indexOf('^')
     if (x !== -1) {
         guard = [x, y]
     }
     puzzle.push(line.split(''))
 })
-let puzzlecopy = JSON.parse(JSON.stringify(puzzle))
-let [positions, loop] = moveGuard(guard,puzzlecopy)
+let firstpass = JSON.parse(JSON.stringify(puzzle))
+let [positions, _] = moveGuard(guard, firstpass)
 console.log('Del 1:', positions)
 // Del 2
 let loops = 0
+let cache = {}
 for (let y = 0; y < puzzle.length; y++) {
+    let now = Date.now()
     for (let x = 0; x < puzzle[y].length; x++) {
-        puzzlecopy = JSON.parse(JSON.stringify(puzzle))
+        if (firstpass[y][x] != 'X') continue
+        let puzzlecopy = JSON.parse(JSON.stringify(puzzle))
         if (puzzlecopy[y][x] == '.') puzzlecopy[y][x] = 'O'
         else continue
-        let [positions, loop] = moveGuard(guard, puzzlecopy)
+        // const hash = puzzlecopy[y].join('')
+        // if(hash in cache) {
+        //     console.log('Memo hit')
+        //     check = cache[hash]
+        // } else {
+        //     check = moveGuard(guard, puzzlecopy)
+        //     cache[hash] = check
+        // }
+        const check = moveGuard(guard, puzzlecopy)
+        const [_, loop] = check
         if (loop) {
             loops++
         }
         puzzlecopy[y][x] = '.'
     }
+    console.log({ y, time: Date.now() - now })
 }
 console.log('Del 2:', loops)
 
 function moveGuard(start, p) {
-    let prevs = []
+    let cache = new Set()
     let positions = 0
     let guarddir = 0
     let guard = [start[0], start[1]]
@@ -51,7 +64,7 @@ function moveGuard(start, p) {
             guard[1] += dy
             p[ny][nx] = 'X'
             if (next != 'X' && next != 'O') {
-                prevs.push([[nx, ny], [dx, dy]])
+                cache.add(nx+','+ny+','+dx+','+dy)
                 positions++
             }
         } else {
@@ -61,10 +74,7 @@ function moveGuard(start, p) {
         }
         // Loop detection
         if (next == 'O' || next == 'X') {
-            let f = prevs.find(([pos, dir]) => {
-                return pos[0] == nx && pos[1] == ny && dir[0] == dx && dir[1] == dy
-            })
-            if (f != undefined) {
+            if (cache.has(nx+','+ny+','+dx+','+dy)) {
                 return [positions, true]
             }
         }
