@@ -18,28 +18,16 @@ let [positions, _] = moveGuard(guard, firstpass)
 console.log('Del 1:', positions)
 // Del 2
 let loops = 0
-let cache = {}
 for (let y = 0; y < puzzle.length; y++) {
     let now = Date.now()
     for (let x = 0; x < puzzle[y].length; x++) {
         if (firstpass[y][x] != 'X') continue
         let puzzlecopy = JSON.parse(JSON.stringify(puzzle))
-        if (puzzlecopy[y][x] == '.') puzzlecopy[y][x] = 'O'
-        else continue
-        // const hash = puzzlecopy[y].join('')
-        // if(hash in cache) {
-        //     console.log('Memo hit')
-        //     check = cache[hash]
-        // } else {
-        //     check = moveGuard(guard, puzzlecopy)
-        //     cache[hash] = check
-        // }
-        const check = moveGuard(guard, puzzlecopy)
-        const [_, loop] = check
+        puzzlecopy[y][x] = 'O'
+        const [_, loop] = moveGuard(guard, puzzlecopy)
         if (loop) {
             loops++
         }
-        puzzlecopy[y][x] = '.'
     }
     console.log({ y, time: Date.now() - now })
 }
@@ -63,7 +51,7 @@ function moveGuard(start, p) {
             guard[0] += dx
             guard[1] += dy
             p[ny][nx] = 'X'
-            if (next != 'X' && next != 'O') {
+            if (next != 'X') {
                 cache.add(nx+','+ny+','+dx+','+dy)
                 positions++
             }
