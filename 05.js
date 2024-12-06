@@ -14,20 +14,29 @@ lines.forEach(line => {
 
 let middleTot = 0
 let failedMiddle = 0
+let correct = []
+let failed = []
 for (const update of updates) {
     let valid = true
     valid = checkRules(update)
-
-
-    const middle = update[Math.floor(update.length / 2)]
-    if (valid) middleTot += middle
-    else {
-        // Memory goes brrrrr
-        const fixed = findValidPermutations(update)
-        console.log(fixed)
-        failedMiddle += fixed[Math.floor(fixed.length / 2)]
-    }
+    if (valid) correct.push(update)
+    else failed.push(update)
 }
+
+// Del 2
+failed.forEach(x => {
+    while (!(rules.every(y => !(x.includes(y[0])) || !(x.includes(y[1])) || x.indexOf(y[0]) < x.indexOf(y[1])))) {
+        rules.forEach(y => {
+            if (!(x.includes(y[0]) && x.includes(y[1]))) return;
+            if (x.indexOf(y[0]) < x.indexOf(y[1])) return;
+            temp = x[x.indexOf(y[0])];
+            x[x.indexOf(y[0])] = x[x.indexOf(y[1])];
+            x[x.indexOf(y[1])] = temp;
+        });
+    }
+});
+middleTot = correct.reduce((acc, x) => acc + x[Math.floor(x.length / 2)], 0)
+failedMiddle = failed.reduce((acc, x) => acc + x[Math.floor(x.length / 2)], 0)
 
 console.log('Del 1:', middleTot)
 console.log('Del 2:', failedMiddle)
@@ -50,21 +59,4 @@ function checkRules(update) {
     return valid
 }
 
-function findValidPermutations(arr) {
-    let fixed = []
-    function permute(subArr, m = []) {
-        if (subArr.length === 0) {
-            if (checkRules(m)) {
-                fixed = m
-            }
-        } else {
-            for (let i = 0; i < subArr.length; i++) {
-                let curr = subArr.slice()
-                let next = curr.splice(i, 1)
-                permute(curr.slice(), m.concat(next))
-            }
-        }
-    }
-    permute(arr)
-    return fixed
-}
+
