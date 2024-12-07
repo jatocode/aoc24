@@ -5,28 +5,21 @@ const args = process.argv.slice(2)
 const data = fs.readFileSync(args[0], 'utf8')
 const lines = data.split('\n')
 
-let calibs = []
 let sum = 0
+let c = []
 lines.forEach((line, y) => {
+    if (line.length == 0) return
     const match = line.match(/(\d+):(.*)/)
     const test = parseInt(match[1])
     const values = match[2].trim().split(' ').map(x => parseInt(x))
-    calibs[test] = values
-    sum += check(test, values)
+    sum += check(test, values) ? test : 0
 })
-console.table(calibs)
-
 console.log('Del 1', sum)
 
 function check(test, values) {
-    const f1 = values.reduce((acc, x) => acc + x, 0)
-    if (f1 == test) return f1
-    const f2 = values.reduce((acc, x) => acc * x, 1)
-    if (f2 == test) return f2
-    const f3 = values.reduce((acc, x, i) => i % 2 == 0 ? acc + x : acc * x, 0)
-    if (f3 == test) return f3
-    const f4 = values.reduce((acc, x, i) => i % 2 == 0 ? acc * x : acc + x, 1)
-    if (f4 == test) return f4
-
-    return 0
+    if (values.length === 1) return values[0] === test 
+    const rem = values.slice(2)
+    const valp = [values[0] + values[1], ...rem]
+    const valm = [values[0] * values[1], ...rem]
+    return check(test, valp) || check(test, valm)
 }
