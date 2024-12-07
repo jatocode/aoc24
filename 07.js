@@ -14,8 +14,8 @@ lines.forEach((line, y) => {
     const values = match[2].trim().split(' ').map(x => parseInt(x))
     sum += check(test, values) ? test : 0
     sum2 += check(test, values, true) ? test : 0
-
 })
+
 console.log('Del 1', sum)
 console.log('Del 2', sum2)
 
@@ -28,7 +28,8 @@ function check(test, values, concat = false) {
         // älskar javascript
         const valc = [+`${values[0]}${values[1]}`, ...rem]
         return check(test, valp, true) || check(test, valm, true) || check(test, valc, true)
-    } else {
-        return check(test, valp) || check(test, valm)
     }
+    
+    return check(test, valp) || check(test, valm)
+    
 }
