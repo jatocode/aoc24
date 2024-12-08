@@ -46,9 +46,7 @@ function createAntidotes(multi = false) {
                     if (map[ny] && map[ny][nx] != undefined) {
                         if (map[ny][nx] == '.') map[ny][nx] = '#'
                         // Är det redan samma frekvens så skapa ingen antidot
-                        if(multi) 
-                            antidotes.add(nx + ',' + ny)
-                        else if (map[ny][nx] != name) {
+                        if (map[ny][nx] != name) {
                             antidotes.add(nx + ',' + ny)
                         }
                     }
