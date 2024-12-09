@@ -14,19 +14,43 @@ diskmap.split('').forEach((cell, x) => {
 system.push([-1, 0])
 
 // console.log(diskmap)
-// printDisk(system)
-system = defrag(system)
-console.log(system)
-console.log('Del 1: ', checkSum(system))
+let system1 = defragBlock(JSON.parse(JSON.stringify(system)))
+//printDisk(system1)
+console.log('Del 1: ', checkSum(system1))
 
-function defrag(system) {
+let system2 = defragFile(JSON.parse(JSON.stringify(system)))
+//printDisk(system2)
+console.log('Del 2: ', checkSum(system2))
+
+function defragFile(system) {
+    const filesBySize = [...system].filter(block => block[0] != -1).sort((a, b) => b[0] - a[0])
+    filesBySize.forEach(file => {
+        const fileIndex = system.indexOf(file)
+        const firstFree = system.filter(block => block[0] == -1 && block[1] >= file[1] && system.indexOf(block) < fileIndex).shift()
+        if (firstFree) {
+            firstFree[1] = firstFree[1] - file[1]
+            const newSystem = [
+                ...system.slice(0, system.indexOf(firstFree)),
+                file,
+                ...system.slice(system.indexOf(firstFree), fileIndex),
+                [-1, file[1]],
+                ...system.slice(fileIndex + 1)
+            ]
+            system = newSystem
+            system = system.filter(block => block[1] > 0)
+        }
+    })
+    return system
+}
+
+function defragBlock(system) {
     for (i = 0; i < system.length; i++) {
         const firstFree = system.filter(block => block[0] == -1 && block[1] > 0).shift()
-        const lastFile = system.filter(block => block[0] != -1 /* && cell[1] >= firstFree[1] */).pop()
+        const lastFile = system.filter(block => block[0] != -1).pop()
         const lastFree = system.filter(block => block[0] == -1).pop()
         const firstFreeIndex = system.indexOf(firstFree)
         const lastFileIndex = system.indexOf(lastFile)
-        if(lastFileIndex + 1 == firstFreeIndex) {
+        if (lastFileIndex + 1 == firstFreeIndex) {
             break;
         }
 
@@ -41,7 +65,6 @@ function defrag(system) {
         ]
         system = newSystem
         system = system.filter(block => block[1] > 0)
-        //printDisk(system)
     }
     system = system.filter(block => block[1] > 0)
     return system
@@ -51,10 +74,11 @@ function checkSum(system) {
     let sum = 0
     let pos = 0
     system.forEach(block => {
-        if(block[0] != -1) 
-            for (let i = 0; i < block[1]; i++) {
-                sum += block[0] * pos++
-            }
+        for (let i = 0; i < block[1]; i++) {
+            if (block[0] != -1)
+                sum += block[0] * pos
+            pos++
+        }
     })
     return sum
 }
