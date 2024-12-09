@@ -13,13 +13,10 @@ diskmap.split('').forEach((cell, x) => {
 })
 system.push([-1, 0])
 
-// console.log(diskmap)
-//let system1 = defragBlock(JSON.parse(JSON.stringify(system)))
-//printDisk(system1)
-//console.log('Del 1: ', checkSum(system1))
+let system1 = defragBlock(JSON.parse(JSON.stringify(system)))
+console.log('Del 1: ', checkSum(system1))
 
 let system2 = defragFile(JSON.parse(JSON.stringify(system)))
-//printDisk(system2)
 console.log('Del 2: ', checkSum(system2))
 
 function defragFile(system) {
@@ -61,12 +58,15 @@ function defragBlock(system) {
         firstFree[1] = firstFree[1] - 1
         lastFree[1] = lastFree[1] + 1
 
-        const newSystem = [
-            ...system.slice(0, firstFreeIndex),
-            [lastFile[0], 1], // Todo - trycker in massa [x,1] block på rad istället för att slå ihop. Funkar - men....
-            ...system.slice(firstFreeIndex)
-        ]
-        system = newSystem
+        if (system[firstFreeIndex - 1] && system[firstFreeIndex - 1][0] == lastFile[0]) {
+            system[firstFreeIndex - 1][1] = system[firstFreeIndex - 1][1] + 1
+        } else {
+            system = [
+                ...system.slice(0, firstFreeIndex),
+                [lastFile[0], 1],
+                ...system.slice(firstFreeIndex)
+            ]
+        }
         system = system.filter(block => block[1] > 0)
     }
     system = system.filter(block => block[1] > 0)
