@@ -44,10 +44,10 @@ function defragFile(system) {
 }
 
 function defragBlock(system) {
+    const lastFree = system.findLast(block => block[0] == -1)
     for (i = 0; i < system.length; i++) {
-        const firstFree = system.filter(block => block[0] == -1 && block[1] > 0).shift()
-        const lastFile = system.filter(block => block[0] != -1).pop()
-        const lastFree = system.filter(block => block[0] == -1).pop()
+        const firstFree = system.find(block => block[0] == -1 && block[1] > 0)
+        const lastFile = system.findLast(block => block[0] != -1)
         const firstFreeIndex = system.indexOf(firstFree)
         const lastFileIndex = system.indexOf(lastFile)
         if (lastFileIndex + 1 == firstFreeIndex) {
@@ -67,9 +67,11 @@ function defragBlock(system) {
                 ...system.slice(firstFreeIndex)
             ]
         }
-        system = system.filter(block => block[1] > 0)
+        // Rensa bort tomma block
+        if (lastFile[1] == 0 || firstFree[1] == 0) {
+            system = system.filter(block => block[1] > 0)
+        }
     }
-    system = system.filter(block => block[1] > 0)
     return system
 }
 
