@@ -36,33 +36,29 @@ function blink2(stones, maxBlinks) {
        const todo = []
        for (const stone of keys) {
             const digits = stone.toString()
-            let count = 1
-            if(map.has(stone)) {
-                count = map.get(stone)
-            }
+            let count = map.get(stone) ?? 1
             if (stone == 0) {
-                todo.push([stone, -1 * count])
-                todo.push([stone + 1, 1 * count])
+                todo.push([stone, -count])
+                todo.push([stone + 1, count])
             }
             else if (digits.length % 2 == 0) {
                 const left = parseInt(digits.slice(0, Math.floor(digits.length / 2)))
                 const right = parseInt(digits.slice(digits.length / 2))
-                todo.push([stone, -1 * count])
-                todo.push([left, 1 * count])
-                todo.push([right, 1 * count])
+                todo.push([stone, -count])
+                todo.push([left, count])
+                todo.push([right, count])
             }
             else {
-                todo.push([stone, -1 * count])
-                todo.push([stone * 2024, 1 * count])
+                todo.push([stone, -count])
+                todo.push([stone * 2024, count])
             }
         }
         todo.forEach(t => bump(map, t[0], t[1]))
     }
-    return map.values().reduce((a, b) => a + b, 0)
+    return [...map.values()].reduce((a, b) => a + b, 0)
 }
 
 function bump(map, key, num) {
-    //console.log('bump', key, num)
     if(map.has(key)) map.set(key, map.get(key) + num)
     else map.set(key, num)
     if(map.get(key) == 0) map.delete(key)
