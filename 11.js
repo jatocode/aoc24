@@ -32,34 +32,28 @@ function blink2(stones, maxBlinks) {
     const map = new Map()
     stones.map(s => map.set(s, 1))
     for (let blink = 0; blink < maxBlinks; blink++) {
-       const keys = [...map.keys()]
-       const todo = []
-       for (const stone of keys) {
+        const keys = [...map.keys()]
+        const changes = []
+        for (const stone of keys) {
             const digits = stone.toString()
             let count = map.get(stone) ?? 1
-            if (stone == 0) {
-                todo.push([stone, -count])
-                todo.push([stone + 1, count])
-            }
+            changes.push([stone, -count])
+            if (stone == 0) changes.push([stone + 1, count])
             else if (digits.length % 2 == 0) {
                 const left = parseInt(digits.slice(0, Math.floor(digits.length / 2)))
                 const right = parseInt(digits.slice(digits.length / 2))
-                todo.push([stone, -count])
-                todo.push([left, count])
-                todo.push([right, count])
+                changes.push([left, count])
+                changes.push([right, count])
             }
-            else {
-                todo.push([stone, -count])
-                todo.push([stone * 2024, count])
-            }
+            else changes.push([stone * 2024, count])
         }
-        todo.forEach(t => bump(map, t[0], t[1]))
+        changes.forEach(([key, count]) => bump(map, key, count))
     }
     return [...map.values()].reduce((a, b) => a + b, 0)
 }
 
 function bump(map, key, num) {
-    if(map.has(key)) map.set(key, map.get(key) + num)
+    if (map.has(key)) map.set(key, map.get(key) + num)
     else map.set(key, num)
-    if(map.get(key) == 0) map.delete(key)
+    if (map.get(key) == 0) map.delete(key)
 }
