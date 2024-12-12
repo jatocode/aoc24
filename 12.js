@@ -51,33 +51,34 @@ function regionFacts(region) {
     }, 0)
 
     let sides = new Set()
-    for (const pos of positions) {
+    let test = positions.sort((a, b) => a[1] - b[1])
+    for (const pos of test) {
         const type = getType(pos[0], pos[1])
 
         // Uppåt
-        let other = getType(pos[0], pos[1] - 1, 1)
+        let other = getType(pos[0], pos[1] - 1, 'UP')
         let p = ['UP', pos[1] - 1]
         if (other != type) {
             console.log('UP', pos, other)
             sides.add(p.join(','))
         }
     }
-    for (const pos of positions) {
+    for (const pos of test) {
         const type = getType(pos[0], pos[1])
 
         // Nedåt
-        other = getType(pos[0], pos[1] + 1, 2)
+        other = getType(pos[0], pos[1] + 1, 'DOWN')
         p = ['DOWN', pos[1] + 1]
         if (other != type) {
             console.log('DOWN', pos, other)
             sides.add(p.join(','))
         }
     }
-    for (const pos of positions) {
+    for (const pos of test) {
         const type = getType(pos[0], pos[1])
 
         // Vänster
-        other = getType(pos[0] - 1, pos[1], 3)
+        other = getType(pos[0] - 1, pos[1], 'LEFT')
         p = [pos[0] - 1, 'LEFT']
         if (other != type) {
             console.log('LEFT', pos, other)
@@ -85,11 +86,11 @@ function regionFacts(region) {
         }
 
     }
-    for (const pos of positions) {
+    for (const pos of test) {
         const type = getType(pos[0], pos[1])
 
         // Höger
-        other = getType(pos[0] + 1, pos[1], 4)
+        other = getType(pos[0] + 1, pos[1], 'RIGHT')
         p = [pos[0] + 1, 'RIGHT']
         if (other != type) {
             console.log('RIGHT', pos, other)
