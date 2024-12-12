@@ -26,6 +26,7 @@ function findAllRegions() {
             if (!found) regions.push(findRegion([x, y]))
         }
     }
+    console.log('Regions:', regions.length)
     return regions
 }
 
@@ -49,8 +50,60 @@ function regionFacts(region) {
         return acc + border.length + sumOutside
     }, 0)
 
-    //console.log(type, 'Price:', area * perimeter, 'Area:', area, 'Perimeter:', perimeter,)
+    let sides = new Set()
+    for (const pos of positions) {
+        const type = getType(pos[0], pos[1])
+
+        // Uppåt
+        let other = getType(pos[0], pos[1] - 1, 1)
+        let p = ['UP', pos[1] - 1]
+        if (other != type) {
+            console.log('UP', pos, other)
+            sides.add(p.join(','))
+        }
+    }
+    for (const pos of positions) {
+        const type = getType(pos[0], pos[1])
+
+        // Nedåt
+        other = getType(pos[0], pos[1] + 1, 2)
+        p = ['DOWN', pos[1] + 1]
+        if (other != type) {
+            console.log('DOWN', pos, other)
+            sides.add(p.join(','))
+        }
+    }
+    for (const pos of positions) {
+        const type = getType(pos[0], pos[1])
+
+        // Vänster
+        other = getType(pos[0] - 1, pos[1], 3)
+        p = [pos[0] - 1, 'LEFT']
+        if (other != type) {
+            console.log('LEFT', pos, other)
+            sides.add(p.join(','))
+        }
+
+    }
+    for (const pos of positions) {
+        const type = getType(pos[0], pos[1])
+
+        // Höger
+        other = getType(pos[0] + 1, pos[1], 4)
+        p = [pos[0] + 1, 'RIGHT']
+        if (other != type) {
+            console.log('RIGHT', pos, other)
+            sides.add(p.join(','))
+        }
+    }
+    console.log(type, 'Price:', area * perimeter, 'Area:', area, 'Perimeter:', perimeter, 'Sides:', sides, sides.size)
     return area * perimeter
+}
+
+
+
+function getType(x, y, dir = 0) {
+    return map[y] == undefined ? dir : map[y][x] == undefined ? dir : map[y][x]
 }
 
 function findRegion(start) {
@@ -64,7 +117,7 @@ function findRegion(start) {
         for (const nextpos of neighbours(current, type)) {
             const next = nextpos.join(',')
             found.add(current.join(','))
-            if(!visited.has(next)) queue.push(nextpos)
+            if (!visited.has(next)) queue.push(nextpos)
             visited.add(next)
             if (found.has(next)) continue
         }
